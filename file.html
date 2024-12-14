@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .section h2 {
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group button {
+            width: 100%;
+            padding: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Product Management -->
+        <div class="section" id="product-section">
+            <h2>Product Management</h2>
+            <div class="form-group">
+                <label for="product-name">Product Name:</label>
+                <input type="text" id="product-name">
+            </div>
+            <div class="form-group">
+                <label for="product-price">Product Price:</label>
+                <input type="number" id="product-price" step="0.01">
+            </div>
+            <button onclick="addProduct()">Add Product</button>
+            <h3>Product Catalog</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="product-list"></tbody>
+            </table>
+        </div>
+
+        <!-- Customer Management -->
+        <div class="section" id="customer-section">
+            <h2>Customer Management</h2>
+            <div class="form-group">
+                <label for="customer-username">Username:</label>
+                <input type="text" id="customer-username">
+            </div>
+            <div class="form-group">
+                <label for="customer-password">Password:</label>
+                <input type="password" id="customer-password">
+            </div>
+            <button onclick="registerCustomer()">Register Customer</button>
+        </div>
+
+        <!-- Order Management -->
+        <div class="section" id="order-section">
+            <h2>Order Management</h2>
+            <div class="form-group">
+                <label for="order-customer">Customer Username:</label>
+                <input type="text" id="order-customer">
+            </div>
+            <div class="form-group">
+                <label for="order-product">Select Product (Enter Product ID):</label>
+                <input type="number" id="order-product">
+            </div>
+            <button onclick="placeOrder()">Place Order</button>
+            <h3>Order Details</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Products</th>
+                    </tr>
+                </thead>
+                <tbody id="order-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let products = [];
+        let customers = [];
+        let orders = [];
+        let orderId = 1;
+
+        // Add Product
+        function addProduct() {
+            const name = document.getElementById("product-name").value;
+            const price = document.getElementById("product-price").value;
+
+            if (name && price) {
+                const product = { id: products.length + 1, name, price: parseFloat(price) };
+                products.push(product);
+                updateProductList();
+                alert("Product added successfully!");
+            } else {
+                alert("Please fill in all product details.");
+            }
+        }
+
+        function updateProductList() {
+            const productList = document.getElementById("product-list");
+            productList.innerHTML = "";
+            products.forEach(product => {
+                productList.innerHTML += `<tr><td>${product.id}</td><td>${product.name}</td><td>$${product.price}</td></tr>`;
+            });
+        }
+
+        // Register Customer
+        function registerCustomer() {
+            const username = document.getElementById("customer-username").value;
+            const password = document.getElementById("customer-password").value;
+
+            if (username && password) {
+                const existingCustomer = customers.find(c => c.username === username);
+                if (existingCustomer) {
+                    alert("Username already exists.");
+                } else {
+                    customers.push({ username, password });
+                    alert("Customer registered successfully!");
+                }
+            } else {
+                alert("Please fill in all customer details.");
+            }
+        }
+
+        // Place Order
+        function placeOrder() {
+            const customerUsername = document.getElementById("order-customer").value;
+            const productId = parseInt(document.getElementById("order-product").value);
+
+            const customer = customers.find(c => c.username === customerUsername);
+            const product = products.find(p => p.id === productId);
+
+            if (customer && product) {
+                const order = { id: orderId++, customer: customerUsername, products: [product.name] };
+                orders.push(order);
+                updateOrderList();
+                alert("Order placed successfully!");
+            } else {
+                alert("Invalid customer or product.");
+            }
+        }
+
+        function updateOrderList() {
+            const orderList = document.getElementById("order-list");
+            orderList.innerHTML = "";
+            orders.forEach(order => {
+                orderList.innerHTML += `<tr><td>${order.id}</td><td>${order.customer}</td><td>${order.products.join(", ")}</td></tr>`;
+            });
+        }
+    </script>
+</body>
+</html>
